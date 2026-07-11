@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useTransition } from "react";
 import { login } from "@/app/admin/actions";
 
@@ -22,8 +23,15 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-slate-950 via-blue-950 to-blue-900 px-4">
-      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-800/60 text-2xl ring-1 ring-blue-400/40">
-        🦆
+      <div className="w-40 overflow-hidden rounded-2xl shadow-xl shadow-blue-950/30">
+        <Image
+          src="/lavadero-el-pato-hero.png"
+          alt="Lavadero El Pato"
+          width={1080}
+          height={1350}
+          priority
+          className="h-auto w-full"
+        />
       </div>
       <h1 className="mt-4 text-2xl font-bold text-white">Lavadero El Pato</h1>
       <p className="mt-1 text-sm text-blue-200">Panel del dueño</p>
