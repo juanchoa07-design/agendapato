@@ -1,22 +1,25 @@
-import Link from "next/link";
 import { logout } from "@/app/admin/actions";
+import AdminNavLinks from "@/components/AdminNavLinks";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="border-b border-gray-200 bg-white px-4 py-3">
+    <div className="min-h-screen bg-slate-100">
+      <nav className="bg-blue-950 px-4 py-3">
         <div className="mx-auto flex max-w-4xl items-center justify-between">
-          <div className="flex items-center gap-4">
-            <span className="font-bold text-gray-900">Lavadero — Admin</span>
-            <Link href="/admin/agenda" className="text-sm text-gray-600 hover:text-blue-600">
-              Agenda
-            </Link>
-            <Link href="/admin/servicios" className="text-sm text-gray-600 hover:text-blue-600">
-              Servicios
-            </Link>
+          <div className="flex items-center gap-5">
+            <span className="flex items-center gap-2 font-bold text-white">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-800/60 text-sm ring-1 ring-blue-400/40">
+                🦆
+              </span>
+              Lavadero El Pato
+            </span>
+            <AdminNavLinks />
           </div>
           <form action={logout}>
-            <button type="submit" className="text-sm text-gray-600 hover:text-red-600">
+            <button
+              type="submit"
+              className="rounded-md px-3 py-1.5 text-sm font-medium text-blue-100 hover:bg-blue-900/60 hover:text-white"
+            >
               Cerrar sesión
             </button>
           </form>

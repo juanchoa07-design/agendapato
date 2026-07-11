@@ -2,12 +2,12 @@
 // 0 = domingo ... 6 = sábado. Editar acá si cambian los horarios/días de atención.
 export const BUSINESS_HOURS: Record<number, { open: string; close: string } | null> = {
   0: null, // domingo cerrado
-  1: { open: "08:00", close: "18:00" },
-  2: { open: "08:00", close: "18:00" },
-  3: { open: "08:00", close: "18:00" },
-  4: { open: "08:00", close: "18:00" },
-  5: { open: "08:00", close: "18:00" },
-  6: { open: "08:00", close: "13:00" },
+  1: null, // lunes cerrado
+  2: null, // martes cerrado
+  3: null, // miércoles cerrado
+  4: null, // jueves cerrado
+  5: null, // viernes cerrado
+  6: { open: "08:00", close: "15:00" }, // sábado, único día que se agenda
 };
 
 export const SLOT_MINUTES = 30;
@@ -46,11 +46,24 @@ export function getAvailableSlots(dateStr: string, bookedTimes: string[]): strin
   return getAllSlotsForDate(dateStr).filter((slot) => !booked.has(slot));
 }
 
+function formatDate(date: Date): string {
+  const y = date.getFullYear();
+  const m = (date.getMonth() + 1).toString().padStart(2, "0");
+  const d = date.getDate().toString().padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 /** Fecha de hoy en formato YYYY-MM-DD (zona horaria local). */
 export function todayStr(): string {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = (now.getMonth() + 1).toString().padStart(2, "0");
-  const d = now.getDate().toString().padStart(2, "0");
-  return `${y}-${m}-${d}`;
+  return formatDate(new Date());
+}
+
+/** Próxima fecha (hoy inclusive) en la que el lavadero atiende, según BUSINESS_HOURS. */
+export function nextOpenDateStr(): string {
+  const date = new Date();
+  for (let i = 0; i < 14; i++) {
+    if (BUSINESS_HOURS[date.getDay()]) return formatDate(date);
+    date.setDate(date.getDate() + 1);
+  }
+  return todayStr();
 }

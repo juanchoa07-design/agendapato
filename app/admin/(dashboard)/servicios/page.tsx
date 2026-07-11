@@ -11,7 +11,7 @@ export default async function ServiciosPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-xl font-bold text-gray-900">Servicios</h1>
+      <h1 className="mb-6 text-xl font-bold text-blue-950">Servicios</h1>
       <ServicesManager initialServices={(services ?? []) as Service[]} />
     </div>
   );

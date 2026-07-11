@@ -21,34 +21,40 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4">
-      <h1 className="mb-6 text-center text-2xl font-bold text-gray-900">
-        Acceso del dueño
-      </h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-slate-950 via-blue-950 to-blue-900 px-4">
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-800/60 text-2xl ring-1 ring-blue-400/40">
+        🦆
+      </div>
+      <h1 className="mt-4 text-2xl font-bold text-white">Lavadero El Pato</h1>
+      <p className="mt-1 text-sm text-blue-200">Panel del dueño</p>
+
+      <form
+        onSubmit={handleSubmit}
+        className="mt-8 w-full max-w-sm space-y-4 rounded-2xl border border-blue-100 bg-white p-6 shadow-xl shadow-blue-950/20"
+      >
         <div>
-          <label className="block text-sm font-medium text-gray-700">Email</label>
+          <label className="block text-sm font-semibold text-slate-800">Email</label>
           <input
             required
             name="email"
             type="email"
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-800/20"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Contraseña</label>
+          <label className="block text-sm font-semibold text-slate-800">Contraseña</label>
           <input
             required
             name="password"
             type="password"
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-800/20"
           />
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}
         <button
           type="submit"
           disabled={isPending}
-          className="w-full rounded-md bg-blue-600 px-4 py-2.5 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className="w-full rounded-lg bg-blue-900 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-blue-950 disabled:opacity-50"
         >
           {isPending ? "Ingresando…" : "Ingresar"}
         </button>

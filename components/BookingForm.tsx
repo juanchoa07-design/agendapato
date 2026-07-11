@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { createAppointment } from "@/app/actions";
-import { todayStr } from "@/lib/slots";
+import { nextOpenDateStr, todayStr } from "@/lib/slots";
 import type { Service } from "@/lib/types";
 
 function formatPrice(price: number | null) {
@@ -15,7 +15,7 @@ export default function BookingForm({ services }: { services: Service[] }) {
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [serviceId, setServiceId] = useState(services[0]?.id ?? "");
-  const [date, setDate] = useState(todayStr());
+  const [date, setDate] = useState(nextOpenDateStr());
   const [time, setTime] = useState("");
 
   const [slots, setSlots] = useState<string[]>([]);
@@ -122,47 +122,47 @@ export default function BookingForm({ services }: { services: Service[] }) {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Nombre</label>
+          <label className="block text-sm font-semibold text-slate-800">Nombre</label>
           <input
             required
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-800/20"
             placeholder="Tu nombre"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Teléfono</label>
+          <label className="block text-sm font-semibold text-slate-800">Teléfono</label>
           <input
             required
             type="tel"
             value={customerPhone}
             onChange={(e) => setCustomerPhone(e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-800/20"
             placeholder="011 1234 5678"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Email</label>
+        <label className="block text-sm font-semibold text-slate-800">Email</label>
         <input
           required
           type="email"
           value={customerEmail}
           onChange={(e) => setCustomerEmail(e.target.value)}
-          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-800/20"
           placeholder="tu@email.com"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Servicio</label>
+        <label className="block text-sm font-semibold text-slate-800">Servicio</label>
         <select
           required
           value={serviceId}
           onChange={(e) => setServiceId(e.target.value)}
-          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-800/20"
         >
           {services.map((service) => (
             <option key={service.id} value={service.id}>
@@ -174,19 +174,20 @@ export default function BookingForm({ services }: { services: Service[] }) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Fecha</label>
+        <label className="block text-sm font-semibold text-slate-800">Fecha</label>
         <input
           required
           type="date"
           min={todayStr()}
           value={date}
           onChange={(e) => handleDateChange(e.target.value)}
-          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-800/20"
         />
+        <p className="mt-1 text-xs text-gray-500">Atendemos solo los sábados, de 8:00 a 15:00.</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Horario</label>
+        <label className="block text-sm font-semibold text-slate-800">Horario</label>
         {slotsLoading && <p className="mt-2 text-sm text-gray-500">Cargando horarios…</p>}
         {slotsError && <p className="mt-2 text-sm text-red-600">{slotsError}</p>}
         {!slotsLoading && !slotsError && slots.length === 0 && (
@@ -199,10 +200,10 @@ export default function BookingForm({ services }: { services: Service[] }) {
                 type="button"
                 key={slot}
                 onClick={() => setTime(slot)}
-                className={`rounded-md border px-2 py-1.5 text-sm ${
+                className={`rounded-lg border px-2 py-1.5 text-sm font-medium ${
                   time === slot
-                    ? "border-blue-600 bg-blue-600 text-white"
-                    : "border-gray-300 bg-white text-gray-700 hover:border-blue-400"
+                    ? "border-blue-900 bg-blue-900 text-white"
+                    : "border-slate-300 bg-white text-slate-700 hover:border-blue-700 hover:text-blue-900"
                 }`}
               >
                 {slot}
@@ -217,7 +218,7 @@ export default function BookingForm({ services }: { services: Service[] }) {
       <button
         type="submit"
         disabled={isPending || services.length === 0}
-        className="w-full rounded-md bg-blue-600 px-4 py-2.5 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        className="w-full rounded-lg bg-blue-900 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-blue-950 disabled:opacity-50"
       >
         {isPending ? "Agendando…" : "Confirmar turno"}
       </button>
