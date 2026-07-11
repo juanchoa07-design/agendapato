@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lavadero — Agenda de turnos",
-  description: "Agendá tu turno de lavado online",
+  title: "Lavadero El Pato — Agenda de turnos",
+  description: "Agendá tu turno de lavado online en Lavadero El Pato",
 };
 
 export default function RootLayout({
@@ -27,7 +27,7 @@ export default function RootLayout({
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-slate-100">{children}</body>
     </html>
   );
 }

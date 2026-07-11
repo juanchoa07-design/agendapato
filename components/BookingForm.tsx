@@ -91,16 +91,19 @@ export default function BookingForm({ services }: { services: Service[] }) {
   if (success) {
     const service = services.find((s) => s.id === serviceId);
     return (
-      <div className="rounded-lg border border-green-200 bg-green-50 p-6 text-center">
-        <h2 className="text-xl font-semibold text-green-800">¡Turno confirmado!</h2>
-        <p className="mt-2 text-green-700">
+      <div className="rounded-xl border border-blue-100 bg-blue-50 p-6 text-center">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-900 text-xl text-white">
+          ✓
+        </div>
+        <h2 className="mt-3 text-xl font-semibold text-blue-950">¡Turno confirmado!</h2>
+        <p className="mt-2 text-blue-900">
           {service?.name} el {date} a las {time} hs.
         </p>
-        <p className="mt-1 text-sm text-green-700">
+        <p className="mt-1 text-sm text-blue-800">
           Te esperamos, {customerName}. Guardá este horario.
         </p>
         <button
-          className="mt-4 rounded-md bg-green-700 px-4 py-2 text-white hover:bg-green-800"
+          className="mt-4 rounded-md bg-blue-900 px-4 py-2 text-white hover:bg-blue-950"
           onClick={() => {
             setSuccess(false);
             setCustomerName("");
