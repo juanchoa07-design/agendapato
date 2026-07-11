@@ -34,6 +34,9 @@ export default async function Home() {
             <BookingForm services={services as Service[]} />
           )}
         </div>
+        <p className="mt-4 text-center text-sm text-slate-500">
+          ¿Necesitás cancelar tu turno? Llamá al <strong className="text-blue-900">092 973 365</strong>.
+        </p>
       </div>
     </main>
   );

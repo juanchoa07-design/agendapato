@@ -102,6 +102,9 @@ export default function BookingForm({ services }: { services: Service[] }) {
         <p className="mt-1 text-sm text-blue-800">
           Te esperamos, {customerName}. Guardá este horario.
         </p>
+        <p className="mt-3 text-xs text-blue-700">
+          Si necesitás cancelar tu turno, llamá al <strong>092 973 365</strong>.
+        </p>
         <button
           className="mt-4 rounded-md bg-blue-900 px-4 py-2 text-white hover:bg-blue-950"
           onClick={() => {
