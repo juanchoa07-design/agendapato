@@ -1,13 +1,19 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import { createAppointment } from "@/app/actions";
-import { nextOpenDateStr, todayStr } from "@/lib/slots";
+import { useMemo, useState } from "react";
+import { getAllSlotsForDate, nextOpenDateStr, todayStr } from "@/lib/slots";
 import type { Service } from "@/lib/types";
+
+const WHATSAPP_NUMBER = "59892973365"; // 092 973 365 (Uruguay, +598)
 
 function formatPrice(price: number | null) {
   if (price == null) return "";
   return price.toLocaleString("es-AR", { style: "currency", currency: "ARS" });
+}
+
+function formatDateEs(dateStr: string) {
+  const [y, m, d] = dateStr.split("-");
+  return `${d}/${m}/${y}`;
 }
 
 export default function BookingForm({ services }: { services: Service[] }) {
@@ -17,49 +23,14 @@ export default function BookingForm({ services }: { services: Service[] }) {
   const [serviceId, setServiceId] = useState(services[0]?.id ?? "");
   const [date, setDate] = useState(nextOpenDateStr());
   const [time, setTime] = useState("");
-
-  const [slots, setSlots] = useState<string[]>([]);
-  const [slotsLoading, setSlotsLoading] = useState(false);
-  const [slotsError, setSlotsError] = useState<string | null>(null);
-
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [isPending, startTransition] = useTransition();
+
+  const slots = useMemo(() => getAllSlotsForDate(date), [date]);
 
   function handleDateChange(newDate: string) {
     setDate(newDate);
     setTime("");
   }
-
-  useEffect(() => {
-    let cancelled = false;
-    // Standard fetch-on-effect loading pattern (React docs: "Fetching data").
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSlotsLoading(true);
-    setSlotsError(null);
-
-    fetch(`/api/available-slots?date=${date}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (cancelled) return;
-        if (data.error) {
-          setSlotsError(data.error);
-          setSlots([]);
-        } else {
-          setSlots(data.slots ?? []);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setSlotsError("No se pudieron cargar los horarios.");
-      })
-      .finally(() => {
-        if (!cancelled) setSlotsLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [date]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -70,55 +41,21 @@ export default function BookingForm({ services }: { services: Service[] }) {
       return;
     }
 
-    const formData = new FormData();
-    formData.set("customer_name", customerName);
-    formData.set("customer_phone", customerPhone);
-    formData.set("customer_email", customerEmail);
-    formData.set("service_id", serviceId);
-    formData.set("appointment_date", date);
-    formData.set("appointment_time", time);
-
-    startTransition(async () => {
-      const result = await createAppointment(formData);
-      if (result.ok) {
-        setSuccess(true);
-      } else {
-        setSubmitError(result.error);
-      }
-    });
-  }
-
-  if (success) {
     const service = services.find((s) => s.id === serviceId);
-    return (
-      <div className="rounded-xl border border-blue-100 bg-blue-50 p-6 text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-900 text-xl text-white">
-          ✓
-        </div>
-        <h2 className="mt-3 text-xl font-semibold text-blue-950">¡Turno confirmado!</h2>
-        <p className="mt-2 text-blue-900">
-          {service?.name} el {date} a las {time} hs.
-        </p>
-        <p className="mt-1 text-sm text-blue-800">
-          Te esperamos, {customerName}. Guardá este horario.
-        </p>
-        <p className="mt-3 text-xs text-blue-700">
-          Si necesitás cancelar tu turno, llamá al <strong>092 973 365</strong>.
-        </p>
-        <button
-          className="mt-4 rounded-md bg-blue-900 px-4 py-2 text-white hover:bg-blue-950"
-          onClick={() => {
-            setSuccess(false);
-            setCustomerName("");
-            setCustomerPhone("");
-            setCustomerEmail("");
-            setTime("");
-          }}
-        >
-          Agendar otro turno
-        </button>
-      </div>
-    );
+    const message = [
+      "Hola! Quiero agendar un turno en Lavadero El Pato.",
+      `Servicio: ${service?.name ?? ""}`,
+      `Fecha: ${formatDateEs(date)} (sábado)`,
+      `Horario: ${time} hs`,
+      `Nombre: ${customerName}`,
+      `Teléfono: ${customerPhone}`,
+      customerEmail ? `Email: ${customerEmail}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.location.href = url;
   }
 
   return (
@@ -191,12 +128,10 @@ export default function BookingForm({ services }: { services: Service[] }) {
 
       <div>
         <label className="block text-sm font-semibold text-slate-800">Horario</label>
-        {slotsLoading && <p className="mt-2 text-sm text-gray-500">Cargando horarios…</p>}
-        {slotsError && <p className="mt-2 text-sm text-red-600">{slotsError}</p>}
-        {!slotsLoading && !slotsError && slots.length === 0 && (
-          <p className="mt-2 text-sm text-gray-500">No hay horarios disponibles ese día.</p>
+        {slots.length === 0 && (
+          <p className="mt-2 text-sm text-gray-500">Ese día no atendemos, elegí un sábado.</p>
         )}
-        {!slotsLoading && slots.length > 0 && (
+        {slots.length > 0 && (
           <div className="mt-2 grid grid-cols-4 gap-2 sm:grid-cols-6">
             {slots.map((slot) => (
               <button
@@ -220,11 +155,14 @@ export default function BookingForm({ services }: { services: Service[] }) {
 
       <button
         type="submit"
-        disabled={isPending || services.length === 0}
+        disabled={services.length === 0}
         className="w-full rounded-lg bg-blue-900 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-blue-950 disabled:opacity-50"
       >
-        {isPending ? "Agendando…" : "Confirmar turno"}
+        Confirmar turno
       </button>
+      <p className="text-center text-xs text-slate-500">
+        Te vamos a llevar a WhatsApp para enviar la solicitud.
+      </p>
     </form>
   );
 }
